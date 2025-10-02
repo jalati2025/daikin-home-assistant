@@ -23,6 +23,7 @@ system_default = system_default_sect
 
 [system_default_sect]
 Options = UnsafeLegacyRenegotiation
+CipherString = DEFAULT@SECLEVEL=0
 """
     # Create temporary file
     with tempfile.NamedTemporaryFile(mode='w', suffix='.conf', delete=False) as f:
@@ -38,6 +39,7 @@ def make_curl_request(url, ssl_config_file):
         
         result = subprocess.run([
             'curl', '--insecure', '--silent', '--show-error',
+            '--tlsv1.2', '--ciphers', 'DEFAULT@SECLEVEL=0',
             '-H', 'X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283',
             url
         ], capture_output=True, text=True, env=env, timeout=10)

@@ -42,6 +42,7 @@ system_default = system_default_sect
 
 [system_default_sect]
 Options = UnsafeLegacyRenegotiation
+CipherString = DEFAULT@SECLEVEL=0
 """
         # Create temporary file
         with tempfile.NamedTemporaryFile(mode='w', suffix='.conf', delete=False) as f:
@@ -81,6 +82,7 @@ Options = UnsafeLegacyRenegotiation
             
             result = subprocess.run([
                 'curl', '--insecure', '--silent', '--show-error',
+                '--tlsv1.2', '--ciphers', 'DEFAULT@SECLEVEL=0',
                 '-H', f'X-Daikin-uuid: {self.uuid}',
                 '-H', 'User-Agent: HomeAssistant-DaikinLocal/1.0',
                 url
@@ -131,6 +133,7 @@ Options = UnsafeLegacyRenegotiation
             
             result = subprocess.run([
                 'curl', '--insecure', '--silent', '--show-error',
+                '--tlsv1.2', '--ciphers', 'DEFAULT@SECLEVEL=0',
                 '-H', f'X-Daikin-uuid: {self.uuid}',
                 '-H', 'User-Agent: HomeAssistant-DaikinLocal/1.0',
                 url
