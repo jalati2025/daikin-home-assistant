@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2025-01-02
+
+### Fixed
+- SSL connection robustness with multiple fallback configurations
+- SSL unexpected EOF errors (0A000126) with enhanced error handling
+- Improved compatibility with OpenSSL 3.5.2+ in Home Assistant environment
+- Added retry logic and better timeout handling for unreliable connections
+
+### Improved
+- Enhanced OpenSSL configuration with MinProtocol and MaxProtocol settings
+- Multiple SSL configuration fallbacks (TLSv1.2 → TLSv1)
+- Comprehensive error logging and debugging information
+- Better reliability across different OpenSSL versions
+
 ## [1.0.3] - 2025-01-02
 
 ### Fixed
