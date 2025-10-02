@@ -43,6 +43,8 @@ system_default = system_default_sect
 [system_default_sect]
 Options = UnsafeLegacyRenegotiation
 CipherString = DEFAULT@SECLEVEL=0
+MinProtocol = TLSv1
+MaxProtocol = TLSv1.3
 """
         # Create temporary file
         with tempfile.NamedTemporaryFile(mode='w', suffix='.conf', delete=False) as f:
@@ -75,38 +77,84 @@ CipherString = DEFAULT@SECLEVEL=0
         
         ssl_config_file = self._get_ssl_config()
         
-        try:
-            # Set environment variable for OpenSSL legacy renegotiation
-            env = os.environ.copy()
-            env['OPENSSL_CONF'] = ssl_config_file
-            
-            result = subprocess.run([
-                'curl', '--insecure', '--silent', '--show-error',
-                '--tlsv1.2', '--ciphers', 'DEFAULT@SECLEVEL=0',
-                '-H', f'X-Daikin-uuid: {self.uuid}',
-                '-H', 'User-Agent: HomeAssistant-DaikinLocal/1.0',
-                url
-            ], capture_output=True, text=True, env=env, timeout=DEFAULT_TIMEOUT)
-            
-            if result.returncode != 0:
-                raise Exception(f"curl failed: {result.stderr}")
-            
-            # Parse response
-            data = {}
-            for line in result.stdout.strip().split(','):
-                if '=' in line:
-                    key, value = line.split('=', 1)
-                    data[key] = value
-            
-            return data
-            
-        except subprocess.TimeoutExpired:
-            raise Exception("Request timed out")
-        except FileNotFoundError:
-            raise Exception("curl command not found")
-        except Exception as err:
-            _LOGGER.error("Request failed: %s", err)
-            raise
+        # Try multiple SSL configurations
+        curl_configs = [
+            # Primary configuration with OpenSSL config
+            {
+                'env': {**os.environ, 'OPENSSL_CONF': ssl_config_file},
+                'args': [
+                    'curl', '--insecure', '--silent', '--show-error',
+                    '--tlsv1.2', '--ciphers', 'DEFAULT@SECLEVEL=0',
+                    '--retry', '3', '--retry-delay', '1',
+                    '--connect-timeout', '10', '--max-time', '30',
+                    '-H', f'X-Daikin-uuid: {self.uuid}',
+                    '-H', 'User-Agent: HomeAssistant-DaikinLocal/1.0',
+                    url
+                ]
+            },
+            # Fallback configuration without OpenSSL config
+            {
+                'env': os.environ.copy(),
+                'args': [
+                    'curl', '--insecure', '--silent', '--show-error',
+                    '--tlsv1.2', '--ciphers', 'DEFAULT@SECLEVEL=0',
+                    '--retry', '3', '--retry-delay', '1',
+                    '--connect-timeout', '10', '--max-time', '30',
+                    '-H', f'X-Daikin-uuid: {self.uuid}',
+                    '-H', 'User-Agent: HomeAssistant-DaikinLocal/1.0',
+                    url
+                ]
+            },
+            # Legacy configuration
+            {
+                'env': os.environ.copy(),
+                'args': [
+                    'curl', '--insecure', '--silent', '--show-error',
+                    '--tlsv1', '--ciphers', 'DEFAULT@SECLEVEL=0',
+                    '--retry', '3', '--retry-delay', '1',
+                    '--connect-timeout', '10', '--max-time', '30',
+                    '-H', f'X-Daikin-uuid: {self.uuid}',
+                    '-H', 'User-Agent: HomeAssistant-DaikinLocal/1.0',
+                    url
+                ]
+            }
+        ]
+        
+        last_error = None
+        for i, config in enumerate(curl_configs):
+            try:
+                _LOGGER.debug("Trying curl configuration %d", i + 1)
+                result = subprocess.run(
+                    config['args'],
+                    capture_output=True,
+                    text=True,
+                    env=config['env'],
+                    timeout=DEFAULT_TIMEOUT
+                )
+                
+                if result.returncode == 0:
+                    # Parse response
+                    data = {}
+                    for line in result.stdout.strip().split(','):
+                        if '=' in line:
+                            key, value = line.split('=', 1)
+                            data[key] = value
+                    
+                    _LOGGER.debug("Successfully connected using configuration %d", i + 1)
+                    return data
+                else:
+                    last_error = f"curl failed (config {i + 1}): {result.stderr}"
+                    _LOGGER.debug("Configuration %d failed: %s", i + 1, result.stderr)
+                    
+            except subprocess.TimeoutExpired:
+                last_error = f"Request timed out (config {i + 1})"
+                _LOGGER.debug("Configuration %d timed out", i + 1)
+            except Exception as err:
+                last_error = f"Configuration {i + 1} error: {err}"
+                _LOGGER.debug("Configuration %d error: %s", i + 1, err)
+        
+        # If all configurations failed
+        raise Exception(f"All curl configurations failed. Last error: {last_error}")
 
     def _make_set_request(self, endpoint: str, params: Dict[str, Any]) -> bool:
         """Make a set request to the Daikin API using curl."""
@@ -126,35 +174,76 @@ CipherString = DEFAULT@SECLEVEL=0
         
         ssl_config_file = self._get_ssl_config()
         
-        try:
-            # Set environment variable for OpenSSL legacy renegotiation
-            env = os.environ.copy()
-            env['OPENSSL_CONF'] = ssl_config_file
-            
-            result = subprocess.run([
-                'curl', '--insecure', '--silent', '--show-error',
-                '--tlsv1.2', '--ciphers', 'DEFAULT@SECLEVEL=0',
-                '-H', f'X-Daikin-uuid: {self.uuid}',
-                '-H', 'User-Agent: HomeAssistant-DaikinLocal/1.0',
-                url
-            ], capture_output=True, text=True, env=env, timeout=DEFAULT_TIMEOUT)
-            
-            if result.returncode != 0:
-                _LOGGER.error("Set request failed: %s", result.stderr)
-                return False
-            
-            # Check response
-            return "ret=OK" in result.stdout
-            
-        except subprocess.TimeoutExpired:
-            _LOGGER.error("Set request timed out")
-            return False
-        except FileNotFoundError:
-            _LOGGER.error("curl command not found")
-            return False
-        except Exception as err:
-            _LOGGER.error("Unexpected error in set request: %s", err)
-            return False
+        # Try multiple SSL configurations
+        curl_configs = [
+            # Primary configuration with OpenSSL config
+            {
+                'env': {**os.environ, 'OPENSSL_CONF': ssl_config_file},
+                'args': [
+                    'curl', '--insecure', '--silent', '--show-error',
+                    '--tlsv1.2', '--ciphers', 'DEFAULT@SECLEVEL=0',
+                    '--retry', '3', '--retry-delay', '1',
+                    '--connect-timeout', '10', '--max-time', '30',
+                    '-H', f'X-Daikin-uuid: {self.uuid}',
+                    '-H', 'User-Agent: HomeAssistant-DaikinLocal/1.0',
+                    url
+                ]
+            },
+            # Fallback configuration without OpenSSL config
+            {
+                'env': os.environ.copy(),
+                'args': [
+                    'curl', '--insecure', '--silent', '--show-error',
+                    '--tlsv1.2', '--ciphers', 'DEFAULT@SECLEVEL=0',
+                    '--retry', '3', '--retry-delay', '1',
+                    '--connect-timeout', '10', '--max-time', '30',
+                    '-H', f'X-Daikin-uuid: {self.uuid}',
+                    '-H', 'User-Agent: HomeAssistant-DaikinLocal/1.0',
+                    url
+                ]
+            },
+            # Legacy configuration
+            {
+                'env': os.environ.copy(),
+                'args': [
+                    'curl', '--insecure', '--silent', '--show-error',
+                    '--tlsv1', '--ciphers', 'DEFAULT@SECLEVEL=0',
+                    '--retry', '3', '--retry-delay', '1',
+                    '--connect-timeout', '10', '--max-time', '30',
+                    '-H', f'X-Daikin-uuid: {self.uuid}',
+                    '-H', 'User-Agent: HomeAssistant-DaikinLocal/1.0',
+                    url
+                ]
+            }
+        ]
+        
+        for i, config in enumerate(curl_configs):
+            try:
+                _LOGGER.debug("Trying set request with curl configuration %d", i + 1)
+                result = subprocess.run(
+                    config['args'],
+                    capture_output=True,
+                    text=True,
+                    env=config['env'],
+                    timeout=DEFAULT_TIMEOUT
+                )
+                
+                if result.returncode == 0:
+                    # Check response
+                    success = "ret=OK" in result.stdout
+                    if success:
+                        _LOGGER.debug("Set request successful using configuration %d", i + 1)
+                    return success
+                else:
+                    _LOGGER.debug("Set request configuration %d failed: %s", i + 1, result.stderr)
+                    
+            except subprocess.TimeoutExpired:
+                _LOGGER.debug("Set request configuration %d timed out", i + 1)
+            except Exception as err:
+                _LOGGER.debug("Set request configuration %d error: %s", i + 1, err)
+        
+        _LOGGER.error("All set request configurations failed")
+        return False
 
     def test_connection(self) -> bool:
         """Test connection to the Daikin unit."""
