@@ -321,6 +321,14 @@ python3 test_connection.py YOUR_IP YOUR_UUID YOUR_KEY
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## Future Roadmap
+
+### Auto UUID Generation
+- **Streamlined Setup**: Implement automatic UUID generation functionality to simplify device setup
+- **Reduced Manual Steps**: Users will only need to provide device key and IP address
+- **Enhanced User Experience**: Eliminate the need for manual UUID generation and registration steps
+- **Integration Enhancement**: Build UUID generation directly into the Home Assistant configuration flow
+
 ## Support
 
 For support and questions:
@@ -329,19 +337,3 @@ For support and questions:
 2. Review the Home Assistant logs
 3. Test with the provided scripts
 4. Open an issue on GitHub with detailed information
-
-## Changelog
-
-### Version 1.0.0
-- Initial release
-- Climate entity with full temperature and mode control
-- Sensor entities for temperature, humidity, and device status
-- Switch entities for power and fan direction
-- SSL support with legacy renegotiation
-- Comprehensive documentation and test scripts
-
-## Acknowledgments
-
-- Based on the Daikin API documentation and testing
-- SSL fix inspired by the OpenSSL legacy renegotiation workaround
-- Home Assistant integration patterns from the official documentation
