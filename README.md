@@ -23,19 +23,69 @@ This integration is designed for Daikin air conditioners that:
 
 - Home Assistant 2023.1.0 or later
 - Python 3.9 or later
-- Your Daikin AC unit's IP address, UUID, and key
-- The unit must be accessible on your local network
 - curl command available (usually pre-installed on most systems)
+- Access to your local network where the Daikin AC unit will be installed
 
-**Important Setup Notes:**
-- The Daikin AC unit must first be set up to join your WiFi network
-- The device key is located on the sticker attached to your Daikin AC unit
-- **Tested on**: BRP072C42 Australia model, Firmware 1.16
-- **Warning**: Do not update the firmware when first joining to WiFi, as this may disable the local API functionality
+## Complete Setup Guide
 
-## Installation
+### Step 1: Get Device Information from Sticker
 
-### Method 1: Manual Installation (Recommended)
+**Before installing the module in your AC unit**, locate the sticker on your Daikin AC unit and record the following information:
+
+1. **Device Key**: This is printed on the sticker attached to your Daikin AC unit
+   - Example: `0406600515542`
+   - **Important**: Keep this key safe - you'll need it for all API communications
+
+2. **Model Information**: Note your model number for reference
+   - Example: BRP072C42
+
+### Step 2: Install Module in AC Unit
+
+1. **Physical Installation**: Install the WiFi module in your Daikin AC unit following the manufacturer's instructions
+2. **Power On**: Ensure the AC unit is powered on and the module is active
+
+### Step 3: Join Module to WiFi Network
+
+1. **Connect to WiFi**: Use the Daikin mobile app or web interface to connect the module to your local WiFi network
+2. **Note the IP Address**: Record the IP address assigned to your AC unit (check your router's device list)
+   - Example: `192.168.2.239`
+3. **Critical Warning**: **Do not update the firmware** when first joining to WiFi, as this may disable the local API functionality
+
+### Step 4: Generate and Register UUID
+
+1. **Generate a UUID**:
+   - Visit [UUIDgenerator.net](https://www.uuidgenerator.net/)
+   - Generate a UUID and copy it **without the hyphens**
+   - Example: `faac01b6a3e54e9e99a5f8242d9c8283`
+
+2. **Register the UUID with your device**:
+   ```bash
+   curl --insecure -H "X-Daikin-uuid: YOUR_GENERATED_UUID" -v "https://YOUR_IP_ADDRESS/common/register_terminal?key=YOUR_DEVICE_KEY"
+   ```
+   
+   Replace the placeholders:
+   - `YOUR_GENERATED_UUID`: The UUID you generated (without hyphens)
+   - `YOUR_IP_ADDRESS`: Your Daikin AC unit's IP address from Step 3
+   - `YOUR_DEVICE_KEY`: Your device's authentication key from Step 1
+
+   Example:
+   ```bash
+   curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" -v "https://192.168.2.239/common/register_terminal?key=0406600515542"
+   ```
+
+3. **Verify Registration**: You should receive a successful response indicating the UUID has been registered
+
+### Step 5: Test API Access
+
+Before proceeding to Home Assistant installation, verify that the API is accessible:
+
+```bash
+curl --insecure -H "X-Daikin-uuid: YOUR_GENERATED_UUID" "https://YOUR_IP_ADDRESS/common/basic_info?key=YOUR_DEVICE_KEY"
+```
+
+You should receive device information in response. If you get a 403 Forbidden error, repeat Step 4 to ensure the UUID is properly registered.
+
+### Step 6: Install Integration in Home Assistant
 
 1. **Download the integration**:
    ```bash
@@ -53,81 +103,66 @@ This integration is designed for Daikin air conditioners that:
    - Go to Settings → System → Restart
    - Or restart your Home Assistant instance
 
-### Method 2: HACS Installation (Future)
-
-This integration will be available through HACS in a future release.
-
-## Configuration
-
-### Step 1: Find Your Device Information
-
-You need three pieces of information from your Daikin AC unit:
-
-1. **IP Address**: The local IP address of your AC unit
-2. **UUID**: The device's unique identifier
-3. **Key**: The authentication key
-
-#### Generating a UUID for First-Time Setup
-
-If this is your first time setting up the device, you'll need to generate a UUID and register it with your Daikin AC unit:
-
-1. **Generate a UUID**:
-   - Visit [UUIDgenerator.net](https://www.uuidgenerator.net/)
-   - Generate a UUID and copy it **without the hyphens**
-   - Example: `faac01b6a3e54e9e99a5f8242d9c8283`
-
-2. **Register the UUID with your device**:
-   ```bash
-   curl --insecure -H "X-Daikin-uuid: YOUR_GENERATED_UUID" -v "https://YOUR_IP_ADDRESS/common/register_terminal?key=YOUR_DEVICE_KEY"
-   ```
-   
-   Replace the placeholders:
-   - `YOUR_GENERATED_UUID`: The UUID you generated (without hyphens)
-   - `YOUR_IP_ADDRESS`: Your Daikin AC unit's IP address
-   - `YOUR_DEVICE_KEY`: Your device's authentication key
-
-   Example:
-   ```bash
-   curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" -v "https://192.168.2.239/common/register_terminal?key=0406600515542"
-   ```
-
-#### Finding Existing Device Information
-
-You can find these by:
-- Checking your router's device list for the AC unit's IP
-- Using the Daikin mobile app to find the UUID and key
-- Or using the test script provided in this repository
-
-### Step 2: Test Connection
-
-Before adding to Home Assistant, test your connection:
-
-```bash
-cd scripts
-python3 test_connection_curl.py YOUR_IP_ADDRESS YOUR_UUID YOUR_KEY
-```
-
-Example:
-```bash
-python3 test_connection_curl.py 192.168.2.239 faac01b6a3e54e9e99a5f8242d9c8283 0406600515542
-```
-
-**Note**: The integration uses port 443 by default (not 30050) as this is where your Daikin unit is accessible.
-
-### Step 3: Add Integration in Home Assistant
+### Step 7: Configure Integration in Home Assistant
 
 1. **Go to Settings → Devices & Services**
 2. **Click "Add Integration"**
 3. **Search for "Daikin Local"**
 4. **Enter your device information**:
-   - IP Address: `192.168.2.239`
-   - UUID: `faac01b6a3e54e9e99a5f8242d9c8283`
-   - Key: `0406600515542`
+   - IP Address: The IP address from Step 3
+   - UUID: The UUID you generated in Step 4
+   - Key: The device key from Step 1
    - Name: `Daikin AC` (optional)
 
 5. **Click "Submit"**
 
 The integration will test the connection and create the entities.
+
+### Step 8: Verify Installation
+
+1. **Check Entities**: Verify that the following entities are created:
+   - Climate entity for temperature and mode control
+   - Sensor entities for temperature, humidity, and device status
+   - Switch entities for power and fan direction
+
+2. **Test Basic Functions**: Try turning the AC on/off and changing temperature to ensure everything works
+
+## Troubleshooting
+
+### Connection Issues
+
+1. **Check IP Address**: Ensure the AC unit is accessible on your network
+   ```bash
+   ping YOUR_IP_ADDRESS
+   ```
+
+2. **Test with curl**: Use the basic info command to verify API access
+   ```bash
+   curl --insecure -H "X-Daikin-uuid: YOUR_UUID" "https://YOUR_IP/common/basic_info?key=YOUR_KEY"
+   ```
+
+3. **Check Home Assistant logs**: Look for error messages in the logs
+
+### SSL Issues
+
+If you encounter SSL errors:
+
+1. **Setup OpenSSL configuration**:
+   ```bash
+   cd scripts
+   python3 setup_openssl_config.py
+   ```
+
+2. **Verify the configuration works**:
+   ```bash
+   python3 test_connection.py YOUR_IP YOUR_UUID YOUR_KEY
+   ```
+
+### Common Error Messages
+
+- **"Cannot connect"**: Check IP address, UUID, and key
+- **"SSL Error"**: Ensure OpenSSL configuration is set up correctly
+- **"403 Forbidden"**: Try running the register_terminal command again (Step 4)
 
 ## Entities Created
 
@@ -213,51 +248,6 @@ script:
           fan_mode: high
 ```
 
-## Troubleshooting
-
-### Connection Issues
-
-1. **Check IP Address**: Ensure the AC unit is accessible on your network
-   ```bash
-   ping 192.168.2.239
-   ```
-
-2. **Test with curl**: Use the provided commands in `daikin_ac_commands.txt`
-   ```bash
-   OPENSSL_CONF=/tmp/openssl_legacy.conf curl --insecure \
-     -H "X-Daikin-uuid: YOUR_UUID" \
-     "https://YOUR_IP/common/basic_info?key=YOUR_KEY"
-   ```
-
-3. **Check Home Assistant logs**: Look for error messages in the logs
-
-### SSL Issues
-
-If you encounter SSL errors:
-
-1. **Setup OpenSSL configuration**:
-   ```bash
-   cd scripts
-   python3 setup_openssl_config.py
-   ```
-
-2. **Verify the configuration works**:
-   ```bash
-   python3 test_connection.py YOUR_IP YOUR_UUID YOUR_KEY
-   ```
-
-### Entity Not Updating
-
-1. **Check device connectivity**: Ensure the AC unit is powered on and connected
-2. **Restart the integration**: Remove and re-add the integration
-3. **Check Home Assistant logs**: Look for specific error messages
-
-### Common Error Messages
-
-- **"Cannot connect"**: Check IP address, UUID, and key
-- **"SSL Error"**: Ensure OpenSSL configuration is set up correctly
-- **"403 Forbidden"**: Try running the register_terminal command first
-
 ## API Reference
 
 The integration uses the following Daikin API endpoints:
@@ -316,7 +306,7 @@ Run the test script to verify your setup:
 
 ```bash
 cd scripts
-python3 test_connection.py 192.168.2.239 faac01b6a3e54e9e99a5f8242d9c8283 0406600515542
+python3 test_connection.py YOUR_IP YOUR_UUID YOUR_KEY
 ```
 
 ### Contributing
