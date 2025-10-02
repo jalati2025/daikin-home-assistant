@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2025-01-02
+
+### Fixed
+- Home Assistant compatibility issue with FanMode import
+- ImportError: cannot import name 'FanMode' from 'homeassistant.components.climate'
+- Improved compatibility with different Home Assistant versions
+
 ## [1.0.2] - 2025-01-02
 
 ### Fixed
