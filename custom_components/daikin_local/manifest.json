@@ -1,0 +1,13 @@
+{
+  "domain": "daikin_local",
+  "name": "Daikin Local",
+  "documentation": "https://github.com/josh/repos/daikin-home-assistant",
+  "requirements": [
+    "requests>=2.25.0",
+    "urllib3>=1.26.0"
+  ],
+  "dependencies": [],
+  "codeowners": ["@josh"],
+  "config_flow": true,
+  "version": "1.0.0"
+}

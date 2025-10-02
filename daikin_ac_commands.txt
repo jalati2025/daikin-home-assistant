@@ -1,0 +1,183 @@
+# Daikin AC Manual Command Reference - IP: 192.168.2.239
+# UUID: faac01b6a3e54e9e99a5f8242d9c8283
+# Key: 0406600515542
+# Last Updated: 2025-10-02
+
+##OpenSSL
+OPENSSL_CONF=/tmp/openssl_legacy.conf curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/common/basic_info?key=0406600515542"
+
+## Base Command Structure
+All commands require the UUID header and follow this pattern:
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/[endpoint]?key=0406600515542&[parameters]"
+
+## 📊 Information Commands (Read-Only)
+
+### Get Basic Device Information
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/common/basic_info?key=0406600515542"
+# Returns: Device name, version, MAC address, WiFi info
+
+### Get Current AC Control Settings
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/get_control_info?key=0406600515542"
+# Returns: Power, mode, temperature, fan settings, etc.
+
+### Get Current Sensor Data
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/get_sensor_info?key=0406600515542"
+# Returns: Current room temperature, humidity
+
+### Register Terminal (Required before first use)
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/common/register_terminal?key=0406600515542"
+# Returns: ret=OK (run this once if getting 403 errors)
+
+## 🔌 Power Control Commands
+
+### Turn AC On (Auto Mode, 22°C)
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=1&stemp=22.0&shum=0&f_rate=A&f_dir=0"
+
+### Turn AC Off (UPDATED - Now includes all required parameters)
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=0&mode=0&stemp=22.0&shum=0&f_rate=A&f_dir=0"
+
+## 🌡️ Mode Control Commands
+
+### Heat Mode
+# Heat mode at 22°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=4&stemp=22.0&shum=0&f_rate=A&f_dir=0"
+
+# Heat mode at 20°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=4&stemp=20.0&shum=0&f_rate=A&f_dir=0"
+
+# Heat mode at 25°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=4&stemp=25.0&shum=0&f_rate=A&f_dir=0"
+
+### Cool Mode
+# Cool mode at 22°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=3&stemp=22.0&shum=0&f_rate=A&f_dir=0"
+
+# Cool mode at 18°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=3&stemp=18.0&shum=0&f_rate=A&f_dir=0"
+
+# Cool mode at 24°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=3&stemp=24.0&shum=0&f_rate=A&f_dir=0"
+
+### Auto Mode
+# Auto mode at 22°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=1&stemp=22.0&shum=0&f_rate=A&f_dir=0"
+
+### Dry Mode (Dehumidifier)
+# Dry mode at 22°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=2&stemp=22.0&shum=0&f_rate=A&f_dir=0"
+
+### Fan Only Mode
+# Fan only mode
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=0&stemp=22.0&shum=0&f_rate=A&f_dir=0"
+
+## 🌪️ Fan Speed Control
+
+### Different Fan Speeds (replace f_rate parameter)
+# Auto fan speed (recommended)
+&f_rate=A
+
+# Quiet/Low fan speed
+&f_rate=B
+
+# Low fan speed
+&f_rate=3
+
+# Medium fan speed
+&f_rate=4
+
+# High fan speed
+&f_rate=5
+
+# Maximum fan speed
+&f_rate=6
+
+# Example - Cool mode with high fan speed:
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=3&stemp=22.0&shum=0&f_rate=5&f_dir=0"
+
+## 🌬️ Temperature Examples
+
+### Quick Temperature Settings
+# Set to 16°C (minimum)
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=4&stemp=16.0&shum=0&f_rate=A&f_dir=0"
+
+# Set to 18°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=4&stemp=18.0&shum=0&f_rate=A&f_dir=0"
+
+# Set to 20°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=4&stemp=20.0&shum=0&f_rate=A&f_dir=0"
+
+# Set to 22°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=4&stemp=22.0&shum=0&f_rate=A&f_dir=0"
+
+# Set to 24°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=4&stemp=24.0&shum=0&f_rate=A&f_dir=0"
+
+# Set to 26°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=4&stemp=26.0&shum=0&f_rate=A&f_dir=0"
+
+# Set to 32°C (maximum)
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=4&stemp=32.0&shum=0&f_rate=A&f_dir=0"
+
+## 📋 Parameter Reference
+
+Parameter | Description | Values
+----------|-------------|--------
+pow       | Power       | 0=Off, 1=On
+mode      | Mode        | 0=Fan, 1=Auto, 2=Dry, 3=Cool, 4=Heat
+stemp     | Set Temperature | 16.0 to 32.0 (°C)
+shum      | Set Humidity | 0 (usually 0 for auto)
+f_rate    | Fan Rate    | A=Auto, B=Quiet, 3=Low, 4=Med, 5=High, 6=Max
+f_dir     | Fan Direction | 0=Default, 1=Swing
+
+## ✅ Response Codes
+ret=OK      = Command successful
+ret=PARAM NG = Invalid parameters
+ret=ADV_NG   = Advanced parameter error
+
+## 💡 Critical Usage Rules ⚠️
+1. ⚠️ ALWAYS include ALL parameters (pow, mode, stemp, shum, f_rate, f_dir) - NO EXCEPTIONS!
+2. Use decimal temperatures (e.g., 20.0 not 20)
+3. Power-off requires full parameter set - simple pow=0 will fail
+4. Check current status before making changes
+5. Run register_terminal if you get 403 errors
+
+## 🚨 Key Learning:
+Even turning the AC OFF requires all control parameters! The unit won't accept partial commands - this is why the simple power-off command failed initially.
+
+## Quick Reference Commands:
+# Status check
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/get_control_info?key=0406600515542"
+
+# Power OFF
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=0&mode=0&stemp=22.0&shum=0&f_rate=A&f_dir=0"
+
+# Heat 20°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=4&stemp=20.0&shum=0&f_rate=A&f_dir=0"
+
+# Cool 22°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=3&stemp=22.0&shum=0&f_rate=A&f_dir=0"
+
+# Auto 22°C
+curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" "https://192.168.2.239/aircon/set_control_info?key=0406600515542&pow=1&mode=1&stemp=22.0&shum=0&f_rate=A&f_dir=0"
+
+## 🏠 Home Assistant Integration
+This manual command reference is now integrated into a complete Home Assistant custom component.
+
+### Quick Setup:
+1. Copy custom_components/daikin_local to your Home Assistant config
+2. Restart Home Assistant
+3. Add integration via Settings → Devices & Services
+4. Enter your IP, UUID, and Key
+
+### Test Connection:
+cd scripts
+python3 test_connection.py 192.168.2.239 faac01b6a3e54e9e99a5f8242d9c8283 0406600515542
+
+### Features Available in Home Assistant:
+- Climate entity with full temperature and mode control
+- Temperature and humidity sensors
+- Power and fan direction switches
+- Error status and firmware version monitoring
+- SSL handling with legacy renegotiation support
+
+See README.md and INSTALLATION.md for complete documentation.
