@@ -2,12 +2,10 @@
   "domain": "daikin_local",
   "name": "Daikin Local",
   "documentation": "https://github.com/jalati2025/daikin-home-assistant",
-  "requirements": [
-    "requests>=2.25.0",
-    "urllib3>=1.26.0"
-  ],
+  "requirements": [],
   "dependencies": [],
-  "codeowners": ["@josh"],
+  "codeowners": ["@jalati2025"],
   "config_flow": true,
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "iot_class": "local_polling"
 }

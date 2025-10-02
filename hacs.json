@@ -1,0 +1,7 @@
+{
+  "name": "Daikin Local",
+  "content_in_root": false,
+  "filename": "daikin_local",
+  "country": ["TH", "US", "GB", "AU", "CA", "DE", "FR", "IT", "ES", "NL", "BE", "CH", "AT", "SE", "NO", "DK", "FI", "PL", "CZ", "HU", "RO", "BG", "HR", "SI", "SK", "LT", "LV", "EE", "IE", "PT", "GR", "CY", "MT", "LU", "IS", "LI", "MC", "SM", "VA", "AD", "JP", "KR", "CN", "TW", "HK", "SG", "MY", "ID", "PH", "VN", "TH", "IN", "PK", "BD", "LK", "MM", "KH", "LA", "BN", "TL", "NZ", "FJ", "PG", "SB", "VU", "NC", "PF", "WF", "WS", "TO", "KI", "TV", "NR", "MH", "FM", "PW", "AS", "GU", "MP", "VI", "PR", "MX", "GT", "BZ", "SV", "HN", "NI", "CR", "PA", "CU", "JM", "HT", "DO", "TT", "BB", "AG", "DM", "GD", "KN", "LC", "VC", "BS", "AR", "BO", "BR", "CL", "CO", "EC", "FK", "GF", "GY", "PY", "PE", "SR", "UY", "VE", "DZ", "AO", "BW", "BI", "CM", "CV", "CF", "TD", "KM", "CG", "CD", "CI", "DJ", "EG", "GQ", "ER", "ET", "GA", "GM", "GH", "GN", "GW", "KE", "LS", "LR", "LY", "MG", "MW", "ML", "MR", "MU", "MA", "MZ", "NA", "NE", "NG", "RW", "ST", "SN", "SC", "SL", "SO", "ZA", "SS", "SD", "SZ", "TZ", "TG", "TN", "UG", "ZM", "ZW", "RU", "BY", "KZ", "KG", "TJ", "TM", "UZ", "AF", "AM", "AZ", "BH", "BD", "BT", "BN", "KH", "CN", "CY", "GE", "IN", "ID", "IR", "IQ", "IL", "JP", "JO", "KZ", "KW", "KG", "LA", "LB", "MY", "MV", "MN", "MM", "NP", "KP", "OM", "PK", "PH", "QA", "SA", "SG", "KR", "LK", "SY", "TW", "TJ", "TH", "TL", "TR", "TM", "AE", "UZ", "VN", "YE"],
+  "homeassistant": "2023.1.0"
+}
