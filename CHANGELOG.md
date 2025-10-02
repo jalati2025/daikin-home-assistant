@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2025-01-02
+
+### Fixed
+- SSL connection issues in Home Assistant environment
+- SSL signature type error (0A000172) by adding CipherString configuration
+- Improved SSL compatibility with additional curl flags (--tlsv1.2, --ciphers)
+- Updated OpenSSL configuration to include SECLEVEL=0 for legacy devices
+
+## [1.0.1] - 2025-01-02
+
+### Added
+- HACS support and configuration files
+- README_HACS.md for HACS display
+- hacs.json configuration file
+- Updated manifest.json with HACS requirements
+
 ## [1.0.0] - 2025-01-02
 
 ### Added
