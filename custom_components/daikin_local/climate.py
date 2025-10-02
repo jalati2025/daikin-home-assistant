@@ -182,13 +182,14 @@ class DaikinClimateEntity(ClimateEntity):
         
         # Set new temperature
         success = await self.hass.async_add_executor_job(
-            self._client.set_control_info,
-            pow=control_info.get("pow", "1"),
-            mode=control_info.get("mode", "1"),
-            stemp=str(temperature),
-            shum=control_info.get("shum", "0"),
-            f_rate=control_info.get("f_rate", "A"),
-            f_dir=control_info.get("f_dir", "0")
+            lambda: self._client.set_control_info(
+                pow=control_info.get("pow", "1"),
+                mode=control_info.get("mode", "1"),
+                stemp=str(temperature),
+                shum=control_info.get("shum", "0"),
+                f_rate=control_info.get("f_rate", "A"),
+                f_dir=control_info.get("f_dir", "0")
+            )
         )
         
         if success:
@@ -204,13 +205,14 @@ class DaikinClimateEntity(ClimateEntity):
             )
             
             success = await self.hass.async_add_executor_job(
-                self._client.set_control_info,
-                pow="0",
-                mode=control_info.get("mode", "0"),
-                stemp=control_info.get("stemp", "22.0"),
-                shum=control_info.get("shum", "0"),
-                f_rate=control_info.get("f_rate", "A"),
-                f_dir=control_info.get("f_dir", "0")
+                lambda: self._client.set_control_info(
+                    pow="0",
+                    mode=control_info.get("mode", "0"),
+                    stemp=control_info.get("stemp", "22.0"),
+                    shum=control_info.get("shum", "0"),
+                    f_rate=control_info.get("f_rate", "A"),
+                    f_dir=control_info.get("f_dir", "0")
+                )
             )
         else:
             # Turn on with specific mode
@@ -222,13 +224,14 @@ class DaikinClimateEntity(ClimateEntity):
             )
             
             success = await self.hass.async_add_executor_job(
-                self._client.set_control_info,
-                pow="1",
-                mode=daikin_mode,
-                stemp=control_info.get("stemp", "22.0"),
-                shum=control_info.get("shum", "0"),
-                f_rate=control_info.get("f_rate", "A"),
-                f_dir=control_info.get("f_dir", "0")
+                lambda: self._client.set_control_info(
+                    pow="1",
+                    mode=daikin_mode,
+                    stemp=control_info.get("stemp", "22.0"),
+                    shum=control_info.get("shum", "0"),
+                    f_rate=control_info.get("f_rate", "A"),
+                    f_dir=control_info.get("f_dir", "0")
+                )
             )
         
         if success:
@@ -246,13 +249,14 @@ class DaikinClimateEntity(ClimateEntity):
         )
         
         success = await self.hass.async_add_executor_job(
-            self._client.set_control_info,
-            pow=control_info.get("pow", "1"),
-            mode=control_info.get("mode", "1"),
-            stemp=control_info.get("stemp", "22.0"),
-            shum=control_info.get("shum", "0"),
-            f_rate=daikin_fan,
-            f_dir=control_info.get("f_dir", "0")
+            lambda: self._client.set_control_info(
+                pow=control_info.get("pow", "1"),
+                mode=control_info.get("mode", "1"),
+                stemp=control_info.get("stemp", "22.0"),
+                shum=control_info.get("shum", "0"),
+                f_rate=daikin_fan,
+                f_dir=control_info.get("f_dir", "0")
+            )
         )
         
         if success:

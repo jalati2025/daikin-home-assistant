@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2025-01-02
+
+### Fixed
+- Critical bug in climate/set_hvac_mode causing "unexpected keyword argument 'pow'" error
+- Fixed async_add_executor_job parameter passing in all set_control_info calls
+- Resolved issue where keyword arguments were incorrectly passed to async_add_executor_job instead of the target function
+- Affected methods: async_set_hvac_mode, async_set_temperature, async_set_fan_mode, and switch controls
+
 ## [1.0.4] - 2025-01-02
 
 ### Fixed
