@@ -33,7 +33,7 @@ This integration is designed for Daikin air conditioners that:
 
 1. **Download the integration**:
    ```bash
-   git clone https://github.com/josh/repos/daikin-home-assistant.git
+   git clone https://github.com/jalati2025/daikin-home-assistant.git
    cd daikin-home-assistant
    ```
 
