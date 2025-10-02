@@ -17,7 +17,7 @@ This integration is designed for Daikin air conditioners that:
 - Require legacy SSL renegotiation (OpenSSL 3.0+ compatibility)
 - Support the local API endpoints documented in this repository
 
-**Tested with**: DaikinAP64081 (Firmware 1_16_0)
+**Tested with**: BRP072C42 Australia model (Firmware 1.16)
 
 ## Prerequisites
 
@@ -26,6 +26,12 @@ This integration is designed for Daikin air conditioners that:
 - Your Daikin AC unit's IP address, UUID, and key
 - The unit must be accessible on your local network
 - curl command available (usually pre-installed on most systems)
+
+**Important Setup Notes:**
+- The Daikin AC unit must first be set up to join your WiFi network
+- The device key is located on the sticker attached to your Daikin AC unit
+- **Tested on**: BRP072C42 Australia model, Firmware 1.16
+- **Warning**: Do not update the firmware when first joining to WiFi, as this may disable the local API functionality
 
 ## Installation
 
@@ -60,6 +66,32 @@ You need three pieces of information from your Daikin AC unit:
 1. **IP Address**: The local IP address of your AC unit
 2. **UUID**: The device's unique identifier
 3. **Key**: The authentication key
+
+#### Generating a UUID for First-Time Setup
+
+If this is your first time setting up the device, you'll need to generate a UUID and register it with your Daikin AC unit:
+
+1. **Generate a UUID**:
+   - Visit [UUIDgenerator.net](https://www.uuidgenerator.net/)
+   - Generate a UUID and copy it **without the hyphens**
+   - Example: `faac01b6a3e54e9e99a5f8242d9c8283`
+
+2. **Register the UUID with your device**:
+   ```bash
+   curl --insecure -H "X-Daikin-uuid: YOUR_GENERATED_UUID" -v "https://YOUR_IP_ADDRESS/common/register_terminal?key=YOUR_DEVICE_KEY"
+   ```
+   
+   Replace the placeholders:
+   - `YOUR_GENERATED_UUID`: The UUID you generated (without hyphens)
+   - `YOUR_IP_ADDRESS`: Your Daikin AC unit's IP address
+   - `YOUR_DEVICE_KEY`: Your device's authentication key
+
+   Example:
+   ```bash
+   curl --insecure -H "X-Daikin-uuid: faac01b6a3e54e9e99a5f8242d9c8283" -v "https://192.168.2.239/common/register_terminal?key=0406600515542"
+   ```
+
+#### Finding Existing Device Information
 
 You can find these by:
 - Checking your router's device list for the AC unit's IP
