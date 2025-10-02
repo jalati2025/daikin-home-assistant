@@ -12,17 +12,17 @@ A custom Home Assistant integration for controlling Daikin air conditioners that
 
 ## Supported Devices
 
-This integration is designed for Daikin air conditioners that:
+This integration is designed for Daikin air conditioner modules that:
 - Use self-signed SSL certificates
 - Require legacy SSL renegotiation (OpenSSL 3.0+ compatibility)
 - Support the local API endpoints documented in this repository
+- Typically BRP072XXX models
 
 **Tested with**: BRP072C42 Australia model (Firmware 1.16)
 
 ## Prerequisites
 
-- Home Assistant 2023.1.0 or later
-- Python 3.9 or later
+- Home Assistant 2025.10 or later
 - curl command available (usually pre-installed on most systems)
 - Access to your local network where the Daikin AC unit will be installed
 
@@ -36,8 +36,6 @@ This integration is designed for Daikin air conditioners that:
    - Example: `0406600515542`
    - **Important**: Keep this key safe - you'll need it for all API communications
 
-2. **Model Information**: Note your model number for reference
-   - Example: BRP072C42
 
 ### Step 2: Install Module in AC Unit
 
@@ -46,8 +44,8 @@ This integration is designed for Daikin air conditioners that:
 
 ### Step 3: Join Module to WiFi Network
 
-1. **Connect to WiFi**: Use the Daikin mobile app or web interface to connect the module to your local WiFi network
-2. **Note the IP Address**: Record the IP address assigned to your AC unit (check your router's device list)
+1. **Connect to WiFi**: Use the Daikin mobile app "Daikin Mobile Controller"
+2. **Note the IP Address**: Record the IP address assigned to your AC unit (check your router's device list) and set a static IP for the unit
    - Example: `192.168.2.239`
 3. **Critical Warning**: **Do not update the firmware** when first joining to WiFi, as this may disable the local API functionality
 
